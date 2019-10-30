@@ -1,6 +1,7 @@
 package com.banking.persistence;
 
 import java.util.Collection;
+import java.util.Optional;
 
 /**
  * A repository storing {@linkplain Entity entities}.
@@ -11,7 +12,7 @@ public interface Repository<T extends Entity> {
 
     Collection<T> allEntities();
 
-    T entity(String id);
+    Optional<T> entity(String id);
 
     void delete(T entity);
 }

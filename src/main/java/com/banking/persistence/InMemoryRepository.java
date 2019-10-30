@@ -2,6 +2,7 @@ package com.banking.persistence;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class InMemoryRepository<T extends Entity> implements Repository<T> {
@@ -23,8 +24,8 @@ public class InMemoryRepository<T extends Entity> implements Repository<T> {
     }
 
     @Override
-    public T entity(String id) {
-        return entities.get(id);
+    public Optional<T> entity(String id) {
+        return Optional.ofNullable(entities.get(id));
     }
 
     @Override

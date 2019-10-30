@@ -3,6 +3,7 @@ package com.banking.domain.user;
 import com.banking.persistence.Repository;
 
 import java.util.Collection;
+import java.util.Optional;
 
 /**
  * A domain service performing business operations with users of a bank.
@@ -25,7 +26,7 @@ public class UserService {
         return userRepository.allEntities();
     }
 
-    public IndividualUser individual(String id) {
+    public Optional<IndividualUser> individual(String id) {
         return userRepository.entity(id);
     }
 }
