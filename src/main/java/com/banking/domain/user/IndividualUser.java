@@ -10,16 +10,16 @@ import com.banking.persistence.Entity;
 public class IndividualUser extends Entity {
 
     private final String firstName;
-    private final String secondName;
+    private final String lastName;
 
-    public IndividualUser(String firstName, String secondName) {
+    public IndividualUser(String firstName, String lastName) {
         super();
         this.firstName = firstName;
-        this.secondName = secondName;
+        this.lastName = lastName;
     }
 
     @Override
     public String toString() {
-        return String.format("Individual: %s %s", firstName, secondName);
+        return String.format("Individual: %s %s", firstName, lastName);
     }
 }

@@ -26,8 +26,8 @@ public abstract class GetByIdRoute<T extends Entity> implements Route {
             return gson.toJson(entity.get());
         } else {
             response.status(ResponseCode.NOT_FOUND);
-            final String explanation = String.format("Resource %s was not found. Please try again.", request.pathInfo());
-            return gson.toJson(explanation);
+            final String errMsg = String.format("Resource %s was not found. Please try again.", request.pathInfo());
+            return gson.toJson(new ErrorResponse(errMsg));
         }
     }
 

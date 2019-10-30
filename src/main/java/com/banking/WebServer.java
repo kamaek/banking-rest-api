@@ -1,9 +1,6 @@
 package com.banking;
 
-import com.banking.domain.user.GetAllUsers;
-import com.banking.domain.user.GetUserById;
-import com.banking.domain.user.IndividualUser;
-import com.banking.domain.user.UserService;
+import com.banking.domain.user.*;
 import com.banking.persistence.InMemoryRepository;
 import com.banking.persistence.Repository;
 import com.google.gson.Gson;
@@ -11,16 +8,27 @@ import spark.Spark;
 
 public class WebServer {
 
-    private static final Gson GSON = new Gson();
+    public static final int DEFAULT_PORT = 4567;
 
     public static void main(String[] args) {
+        new WebServer().start(DEFAULT_PORT);
+    }
+
+    public void start(int port) {
+        final Gson gson = new Gson();
         final Repository<IndividualUser> userRepository = new InMemoryRepository<>();
         final UserService userService = new UserService(userRepository);
 
+        Spark.port(port);
+        initUserRoutes(gson, userService);
+        Spark.awaitInitialization();
+    }
+
+    private void initUserRoutes(Gson gson, UserService userService) {
         Spark.path("/users", () -> {
-            Spark.post("", (req, res) -> "Post a user\n");
-            Spark.get("", new GetAllUsers(userService, GSON));
-            Spark.get("/:id", new GetUserById(userService, GSON));
+            Spark.post("", new PostUser(userService, gson));
+            Spark.get("", new GetAllUsers(userService, gson));
+            Spark.get("/:id", new GetUserById(userService, gson));
         });
     }
 }
