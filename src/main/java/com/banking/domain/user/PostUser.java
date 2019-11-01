@@ -1,8 +1,8 @@
 package com.banking.domain.user;
 
-import com.banking.rest.PostBody;
-import com.banking.rest.PostRoute;
 import com.banking.rest.ValidationMessage;
+import com.banking.rest.route.PostBody;
+import com.banking.rest.route.PostRoute;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -27,6 +27,11 @@ public class PostUser extends PostRoute<IndividualUser, PostUser.Body> {
         private final String firstName;
         private final String lastName;
 
+        @SuppressWarnings("unused" /* Used via reflection during deserialization. */)
+        public Body() {
+            this("", "");
+        }
+
         Body(String firstName, String lastName) {
             this.firstName = firstName;
             this.lastName = lastName;
@@ -35,8 +40,8 @@ public class PostUser extends PostRoute<IndividualUser, PostUser.Body> {
         @Override
         public List<ValidationMessage> validate() {
             List<ValidationMessage> messages = new ArrayList<>();
-            final boolean firstNameBlank = firstName.trim().isEmpty();
-            final boolean lastNameBlank = lastName.trim().isEmpty();
+            final boolean firstNameBlank = firstName().trim().isEmpty();
+            final boolean lastNameBlank = lastName().trim().isEmpty();
             if (firstNameBlank) {
                 messages.add(new ValidationMessage("First name of a user cannot be blank"));
             }

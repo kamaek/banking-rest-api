@@ -6,4 +6,5 @@ public interface ResponseCode {
     int CREATED = 201;
 
     int NOT_FOUND = 404;
+    int UNPROCESSABLE_ENTITY = 422;
 }

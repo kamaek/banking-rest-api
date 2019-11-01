@@ -2,7 +2,6 @@ package com.banking.rest;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -10,10 +9,6 @@ import static java.util.stream.Collectors.toList;
 public class ValidationException extends Exception {
 
     private final Collection<String> reasons;
-
-    public ValidationException(String reason) {
-        this(Collections.singleton(reason));
-    }
 
     public ValidationException(Collection<String> reasons) {
         this.reasons = new ArrayList<>(reasons);
@@ -24,6 +19,10 @@ public class ValidationException extends Exception {
                 .map(ValidationMessage::text)
                 .collect(toList());
         return new ValidationException(reasons);
+    }
+
+    public Collection<String> reasons() {
+        return new ArrayList<>(reasons);
     }
 
     @Override

@@ -1,4 +1,6 @@
-package com.banking.rest;
+package com.banking.rest.route;
+
+import com.banking.rest.ValidationMessage;
 
 import java.util.List;
 

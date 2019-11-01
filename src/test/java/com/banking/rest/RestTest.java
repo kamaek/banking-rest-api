@@ -8,7 +8,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import spark.Spark;
 
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 
 public abstract class RestTest {
 
@@ -43,7 +43,16 @@ public abstract class RestTest {
         return new ResponseSpecBuilder()
                 .expectStatusCode(ResponseCode.NOT_FOUND)
                 .expectContentType(ContentType.JSON)
-                .expectBody("errorMessage", equalTo(expectedMessage))
+                .expectBody("detail", equalTo(expectedMessage))
+                .build();
+    }
+
+    protected static ResponseSpecification expectedValidationError(String validationText) {
+        return new ResponseSpecBuilder()
+                .expectStatusCode(ResponseCode.UNPROCESSABLE_ENTITY)
+                .expectContentType(ContentType.JSON)
+                .expectBody("validationMessages", hasSize(1))
+                .expectBody("validationMessages[0]", is(validationText))
                 .build();
     }
 }

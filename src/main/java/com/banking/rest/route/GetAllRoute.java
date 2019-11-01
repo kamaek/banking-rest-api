@@ -1,6 +1,8 @@
-package com.banking.rest;
+package com.banking.rest.route;
 
 import com.banking.persistence.Entity;
+import com.banking.rest.ContentType;
+import com.banking.rest.ResponseCode;
 import com.google.gson.Gson;
 import spark.Request;
 import spark.Response;

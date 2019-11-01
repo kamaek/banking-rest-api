@@ -1,5 +1,6 @@
 package com.banking.domain.user;
 
+import com.banking.rest.ContentType;
 import com.banking.rest.RestTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -46,6 +47,15 @@ class IndividualUserRestTest extends RestTest {
                         "firstName", is(expectedFirstName),
                         "lastName", is(expectedLastName)
                 );
+    }
 
+    @Test
+    @DisplayName("return 422 if first name is not specified during user creation")
+    void notPostUserWithAbsentFirstName() {
+        given().contentType(ContentType.JSON)
+                .body("{\"lastName\": \"Doe\"}")
+                .when().post(BASE_PATH)
+                .then()
+                .spec(expectedValidationError("First name of a user cannot be blank"));
     }
 }

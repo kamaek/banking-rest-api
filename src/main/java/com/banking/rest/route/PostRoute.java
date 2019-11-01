@@ -1,6 +1,10 @@
-package com.banking.rest;
+package com.banking.rest.route;
 
 import com.banking.persistence.Entity;
+import com.banking.rest.ContentType;
+import com.banking.rest.ResponseCode;
+import com.banking.rest.ValidationException;
+import com.banking.rest.ValidationMessage;
 import com.google.gson.Gson;
 import spark.Request;
 import spark.Response;

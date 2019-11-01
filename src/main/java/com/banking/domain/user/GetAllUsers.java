@@ -1,6 +1,6 @@
 package com.banking.domain.user;
 
-import com.banking.rest.GetAllRoute;
+import com.banking.rest.route.GetAllRoute;
 import com.google.gson.Gson;
 
 import java.util.Collection;
