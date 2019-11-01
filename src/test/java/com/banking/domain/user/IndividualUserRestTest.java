@@ -1,6 +1,7 @@
 package com.banking.domain.user;
 
 import com.banking.rest.RestTest;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static com.banking.domain.user.UserRequests.postUserSpecification;
@@ -8,11 +9,13 @@ import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
 import static org.hamcrest.Matchers.*;
 
+@DisplayName("IndividualUser resource should")
 class IndividualUserRestTest extends RestTest {
 
-    private static final String BASE_PATH = "/users";
+    private static final String BASE_PATH = "users";
 
     @Test
+    @DisplayName("return an empty array if there are not users")
     void getAllReturnsEmptyArray() {
         when().get(BASE_PATH)
                 .then()
@@ -21,6 +24,7 @@ class IndividualUserRestTest extends RestTest {
     }
 
     @Test
+    @DisplayName("return 404 if the user with the specified ID was not found")
     void getByIdReturnsNotFound() {
         final String path = BASE_PATH + "/absent-id";
         when().get(path)
@@ -29,7 +33,8 @@ class IndividualUserRestTest extends RestTest {
     }
 
     @Test
-    void postUserWithNonEmptyFirstAndLastName() {
+    @DisplayName("create a user with non-blank first name and last name")
+    void postUserWithNonBlankFirstAndLastName() {
         final String expectedFirstName = "John";
         final String expectedLastName = "Doe";
         given().spec(postUserSpecification(expectedFirstName, expectedLastName))
