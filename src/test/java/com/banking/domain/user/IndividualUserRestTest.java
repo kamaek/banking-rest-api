@@ -1,33 +1,46 @@
 package com.banking.domain.user;
 
-import com.banking.rest.ContentType;
-import com.banking.rest.ResponseCode;
 import com.banking.rest.RestTest;
 import org.junit.jupiter.api.Test;
 
+import static com.banking.domain.user.UserRequests.postUserSpecification;
+import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 
 class IndividualUserRestTest extends RestTest {
 
+    private static final String BASE_PATH = "/users";
+
     @Test
     void getAllReturnsEmptyArray() {
-        when().get("users")
+        when().get(BASE_PATH)
                 .then()
-                .statusCode(ResponseCode.OK)
-                .contentType(ContentType.JSON)
+                .spec(expectedSuccessResponse())
                 .body("", hasSize(0));
     }
 
     @Test
     void getByIdReturnsNotFound() {
-        final String path = "users/absent-id";
-        String expectedMessage = String.format("Resource /%s was not found. Please try again.", path);
+        final String path = BASE_PATH + "/absent-id";
         when().get(path)
                 .then()
-                .statusCode(ResponseCode.NOT_FOUND)
-                .contentType(ContentType.JSON)
-                .body("errorMessage", equalTo(expectedMessage));
+                .spec(expectedNotFoundResponse(path));
+    }
+
+    @Test
+    void postUserWithNonEmptyFirstAndLastName() {
+        final String expectedFirstName = "John";
+        final String expectedLastName = "Doe";
+        given().spec(postUserSpecification(expectedFirstName, expectedLastName))
+                .when().post(BASE_PATH)
+                .then()
+                .spec(expectedCreatedResponse())
+                .body(
+                        "id", not(emptyString()),
+                        "firstName", is(expectedFirstName),
+                        "lastName", is(expectedLastName)
+                );
+
     }
 }
