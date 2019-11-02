@@ -18,6 +18,14 @@ public class IndividualUser extends Entity {
         this.lastName = lastName;
     }
 
+    public String firstName() {
+        return firstName;
+    }
+
+    public String lastName() {
+        return lastName;
+    }
+
     @Override
     public String toString() {
         return String.format("Individual: %s %s", firstName, lastName);
