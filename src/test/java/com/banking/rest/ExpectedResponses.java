@@ -31,11 +31,19 @@ public final class ExpectedResponses {
     }
 
     public static ResponseSpecification expectedNotFoundResponse(String resourcePath) {
-        String expectedMessage = String.format("Resource /%s was not found. Please try again.", resourcePath);
+        final String expectedMessage = String.format("Resource /%s was not found. Please try again.", resourcePath);
         return new ResponseSpecBuilder()
                 .expectStatusCode(ResponseCode.NOT_FOUND)
                 .expectContentType(ContentType.JSON)
                 .expectBody("detail", equalTo(expectedMessage))
+                .build();
+    }
+
+    public static ResponseSpecification expectedUnprocessableEntity(String expectedDetail) {
+        return new ResponseSpecBuilder()
+                .expectStatusCode(ResponseCode.UNPROCESSABLE_ENTITY)
+                .expectContentType(ContentType.JSON)
+                .expectBody("detail", equalTo(expectedDetail))
                 .build();
     }
 

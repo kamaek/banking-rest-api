@@ -18,6 +18,10 @@ public final class Money {
     private final BigDecimal amount;
     private final Currency currency;
 
+    public Money(String amount, String currencyCode) {
+        this(new BigDecimal(amount), Currency.getInstance(currencyCode));
+    }
+
     public Money(BigDecimal amount, Currency currency) {
         checkNotNegative(amount);
         this.amount = amount.setScale(currency.getDefaultFractionDigits(), RoundingMode.UNNECESSARY);

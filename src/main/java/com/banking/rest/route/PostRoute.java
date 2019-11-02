@@ -6,29 +6,28 @@ import com.banking.rest.ResponseCode;
 import com.banking.rest.ValidationException;
 import com.banking.rest.ValidationMessage;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import spark.Request;
 import spark.Response;
 import spark.Route;
 
 import java.util.List;
+import java.util.Optional;
 
 public abstract class PostRoute<E extends Entity, B extends PostBody> implements Route {
 
     private final Gson gson;
-    private final Class<B> payloadClass;
 
-    protected PostRoute(Gson gson, Class<B> payloadClass) {
+    protected PostRoute(Gson gson) {
         this.gson = gson;
-        this.payloadClass = payloadClass;
     }
 
     @Override
     public Object handle(Request request, Response response) throws Exception {
-        final String rawBody = request.body();
-        final B body = gson.fromJson(rawBody, payloadClass);
+        final B body = extractPayload(request, gson);
         final List<ValidationMessage> validationMessages = body.validate();
         if (!validationMessages.isEmpty()) {
-            //TODO:30.10.2019:dmytro.hrankin: handle ValidationException somewhere
             throw ValidationException.fromMessages(validationMessages);
         }
         final E createdEntity = create(body);
@@ -42,6 +41,25 @@ public abstract class PostRoute<E extends Entity, B extends PostBody> implements
      *
      * @param body the valid request body
      * @return created resource
+     * @throws ResourceCreationFailed if business rules don't allow to create an entity
      */
-    protected abstract E create(B body);
+    protected abstract E create(B body) throws ResourceCreationFailed;
+
+    /**
+     * Extracts payload from the specified request.
+     */
+    protected abstract B extractPayload(Request request, Gson gson);
+
+    protected JsonObject bodyAsJsonObject(Request request) {
+        return gson.fromJson(request.body(), JsonObject.class);
+    }
+
+    protected Optional<String> extractString(JsonObject json, String fieldName) {
+        final Optional<JsonElement> field = Optional.ofNullable(json.get(fieldName));
+        return field.map(JsonElement::getAsString);
+    }
+
+    protected Optional<String> extractParameter(Request request, String parameterName) {
+        return Optional.ofNullable(request.params(parameterName));
+    }
 }

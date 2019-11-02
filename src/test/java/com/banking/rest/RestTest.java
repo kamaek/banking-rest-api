@@ -9,13 +9,13 @@ import spark.Spark;
 public abstract class RestTest {
 
     @BeforeEach
-    void setUp() {
+    protected void setUp() {
         RestAssured.port = WebServer.DEFAULT_PORT;
         new WebServer().start(WebServer.DEFAULT_PORT);
     }
 
     @AfterEach
-    void tearDown() {
+    protected void tearDown() {
         Spark.stop();
         Spark.awaitStop();
     }

@@ -27,6 +27,7 @@ public class AccountService {
      * Opens a debit account.
      *
      * <p>Account can have non-empty balance initially, if a user "provided" these money to a bank.
+     * This capability to provide the initial balance is added for the sake of testing.
      *
      * @param accountIssuerId the user issued opening of the account (further owner of the account)
      * @param initialBalance  the initial balance of account
