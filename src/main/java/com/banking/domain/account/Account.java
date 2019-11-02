@@ -1,6 +1,7 @@
 package com.banking.domain.account;
 
 import com.banking.domain.money.Money;
+import com.banking.domain.user.IndividualUser;
 import com.banking.persistence.Entity;
 
 import java.util.Objects;
@@ -33,5 +34,20 @@ public class Account extends Entity {
 
     public static Account debitAccount(String ownerId, Money balance) {
         return new Account(ownerId, AccountType.DEBIT, balance);
+    }
+
+    /**
+     * Determines whether the specified user is the owner of the account.
+     */
+    public boolean ownedBy(IndividualUser user) {
+        return ownerId.equals(user.id());
+    }
+
+    public Money balance() {
+        return balance;
+    }
+
+    public boolean isDebitAccount() {
+        return accountType == AccountType.DEBIT;
     }
 }
