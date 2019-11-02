@@ -4,6 +4,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.util.Currency;
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,7 +36,27 @@ class MoneyTest {
     void notBeEqualIfAmountSameButCurrencyDifferent() {
         final BigDecimal five = new BigDecimal("5.00");
         final Money fiveEuro = new Money(five, Currencies.euro());
-        final Money fiveDollar = new Money(five, Currencies.americanDollar());
-        assertNotEquals(fiveEuro, fiveDollar);
+        final Money fiveDollars = new Money(five, Currencies.americanDollar());
+        assertNotEquals(fiveEuro, fiveDollars);
+    }
+
+    @Test
+    @DisplayName("scale amount according to currency")
+    void scaleAmountAccordingToCurrency() {
+        final BigDecimal five = new BigDecimal(5);
+        final Money fiveEuro = new Money(five, Currencies.euro());
+        final Money fiveYen = new Money(five, Currency.getInstance(Locale.JAPAN));
+        assertEquals("5.00 EUR", fiveEuro.toString());
+        assertEquals("5 JPY", fiveYen.toString());
+    }
+
+    @Test
+    @DisplayName("not lose minor currency unit")
+    void notLoseMinorCurrencyUnit() {
+        final BigDecimal five = new BigDecimal("5.01");
+        final ArithmeticException exception = assertThrows(
+                ArithmeticException.class,
+                () -> new Money(five, Currency.getInstance(Locale.JAPAN)));
+        assertEquals("Rounding necessary", exception.getMessage());
     }
 }

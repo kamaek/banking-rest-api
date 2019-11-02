@@ -3,8 +3,10 @@ package com.banking.domain.account;
 import com.banking.domain.money.Money;
 import com.banking.persistence.Entity;
 
+import java.util.Objects;
+
 /**
- * An account of a user.
+ * An account of a user with the balance of {@link Money}.
  */
 public class Account extends Entity {
 
@@ -23,9 +25,13 @@ public class Account extends Entity {
      */
     private Money balance;
 
-    public Account(String ownerId, AccountType accountType, Money balance) {
-        this.ownerId = ownerId;
-        this.accountType = accountType;
-        this.balance = balance;
+    private Account(String ownerId, AccountType accountType, Money balance) {
+        this.ownerId = Objects.requireNonNull(ownerId);
+        this.accountType = Objects.requireNonNull(accountType);
+        this.balance = Objects.requireNonNull(balance);
+    }
+
+    public static Account debitAccount(String ownerId, Money balance) {
+        return new Account(ownerId, AccountType.DEBIT, balance);
     }
 }

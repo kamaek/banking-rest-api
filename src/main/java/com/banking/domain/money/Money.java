@@ -1,6 +1,7 @@
 package com.banking.domain.money;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Currency;
 import java.util.Objects;
 
@@ -14,7 +15,7 @@ public final class Money {
 
     public Money(BigDecimal amount, Currency currency) {
         checkNotNegative(amount);
-        this.amount = amount;
+        this.amount = amount.setScale(currency.getDefaultFractionDigits(), RoundingMode.UNNECESSARY);
         this.currency = Objects.requireNonNull(currency);
     }
 
