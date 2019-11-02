@@ -2,13 +2,9 @@ package com.banking.rest;
 
 import com.banking.WebServer;
 import io.restassured.RestAssured;
-import io.restassured.builder.ResponseSpecBuilder;
-import io.restassured.specification.ResponseSpecification;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import spark.Spark;
-
-import static org.hamcrest.Matchers.*;
 
 public abstract class RestTest {
 
@@ -22,37 +18,5 @@ public abstract class RestTest {
     void tearDown() {
         Spark.stop();
         Spark.awaitStop();
-    }
-
-    protected static ResponseSpecification expectedSuccessResponse() {
-        return new ResponseSpecBuilder()
-                .expectStatusCode(ResponseCode.OK)
-                .expectContentType(ContentType.JSON)
-                .build();
-    }
-
-    protected static ResponseSpecification expectedCreatedResponse() {
-        return new ResponseSpecBuilder()
-                .expectStatusCode(ResponseCode.CREATED)
-                .expectContentType(ContentType.JSON)
-                .build();
-    }
-
-    protected static ResponseSpecification expectedNotFoundResponse(String resourcePath) {
-        String expectedMessage = String.format("Resource /%s was not found. Please try again.", resourcePath);
-        return new ResponseSpecBuilder()
-                .expectStatusCode(ResponseCode.NOT_FOUND)
-                .expectContentType(ContentType.JSON)
-                .expectBody("detail", equalTo(expectedMessage))
-                .build();
-    }
-
-    protected static ResponseSpecification expectedValidationError(String validationText) {
-        return new ResponseSpecBuilder()
-                .expectStatusCode(ResponseCode.UNPROCESSABLE_ENTITY)
-                .expectContentType(ContentType.JSON)
-                .expectBody("validationMessages", hasSize(1))
-                .expectBody("validationMessages[0]", is(validationText))
-                .build();
     }
 }
