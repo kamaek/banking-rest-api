@@ -16,29 +16,10 @@ public final class UserRequests {
     }
 
     public static RequestSpecification postUserSpecification(String firstName, String lastName) {
-        final PostUserPayload payload = new PostUserPayload(firstName, lastName);
+        final PostUser.Body payload = new PostUser.Body(firstName, lastName);
         return new RequestSpecBuilder()
                 .setAccept(ContentType.JSON)
                 .setBody(payload)
                 .build();
-    }
-
-    private static final class PostUserPayload {
-
-        private final String firstName;
-        private final String lastName;
-
-        private PostUserPayload(String firstName, String lastName) {
-            this.firstName = firstName;
-            this.lastName = lastName;
-        }
-
-        @Override
-        public String toString() {
-            return "PostUserPayload{" +
-                    "firstName='" + firstName + '\'' +
-                    ", lastName='" + lastName + '\'' +
-                    '}';
-        }
     }
 }

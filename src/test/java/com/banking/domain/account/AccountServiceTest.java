@@ -52,7 +52,7 @@ class AccountServiceTest {
         final String nonExistingUser = UUID.randomUUID().toString();
         final UserNotExists exception = assertThrows(
                 UserNotExists.class,
-                () -> accountService.accountsOwnedBy(batman.id()));
+                () -> accountService.accountsOwnedBy(nonExistingUser));
         assertEquals(nonExistingUser, exception.userId());
     }
 
