@@ -21,7 +21,7 @@ public abstract class GetByIdRoute<T extends Entity> implements Route {
 
     @Override
     public Object handle(Request request, Response response) throws Exception {
-        final String id = request.params(":id");
+        final String id = request.params("id");
         final Optional<T> entity = entityWithId(id);
         response.type(ContentType.JSON);
         if (entity.isPresent()) {

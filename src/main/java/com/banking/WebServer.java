@@ -1,8 +1,8 @@
 package com.banking;
 
-import com.banking.domain.account.Account;
-import com.banking.domain.account.AccountService;
-import com.banking.domain.account.PostAccount;
+import com.banking.domain.account.*;
+import com.banking.domain.money.Money;
+import com.banking.domain.money.MoneyTypeAdapter;
 import com.banking.domain.user.*;
 import com.banking.persistence.InMemoryRepository;
 import com.banking.persistence.Repository;
@@ -12,6 +12,7 @@ import com.banking.rest.ResponseCode;
 import com.banking.rest.ValidationException;
 import com.banking.rest.route.ResourceCreationFailed;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import spark.Spark;
 
 public class WebServer {
@@ -23,7 +24,7 @@ public class WebServer {
     }
 
     public void start(int port) {
-        final Gson gson = new Gson();
+        final Gson gson = newConfiguredGson();
         final Repository<IndividualUser> userRepository = new InMemoryRepository<>();
         final Repository<Account> accountRepository = new InMemoryRepository<>();
         final UserService userService = new UserService(userRepository);
@@ -34,6 +35,14 @@ public class WebServer {
         initAccountRoutes(gson, accountService);
         addExceptionsHandlers(gson);
         Spark.awaitInitialization();
+    }
+
+    private Gson newConfiguredGson() {
+        return new GsonBuilder()
+                .setPrettyPrinting()
+                .registerTypeAdapter(AccountType.class, new AccountTypeAdapter())
+                .registerTypeAdapter(Money.class, new MoneyTypeAdapter())
+                .create();
     }
 
     private void initUserRoutes(Gson gson, UserService userService) {

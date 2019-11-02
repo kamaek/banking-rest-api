@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class IndividualUserRestTest extends RestTest {
 
     @Test
-    @DisplayName("return an empty array if there are not users")
+    @DisplayName("return an empty array if there are no users")
     void getAllReturnsEmptyArray() {
         when().get(UserRequests.BASE_PATH)
                 .then()
@@ -24,7 +24,7 @@ class IndividualUserRestTest extends RestTest {
     }
 
     @Test
-    @DisplayName("return 404 if the user with the specified ID was not found")
+    @DisplayName("return 404 if the user with the specified ID not exists")
     void getByIdReturnsNotFound() {
         final String path = UserRequests.userPath("absent-id");
         when().get(path)

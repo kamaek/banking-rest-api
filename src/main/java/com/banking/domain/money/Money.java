@@ -48,6 +48,14 @@ public final class Money {
         }
     }
 
+    public BigDecimal amount() {
+        return amount;
+    }
+
+    public Currency currency() {
+        return currency;
+    }
+
     private static boolean isNegative(BigDecimal amount) {
         return amount.compareTo(BigDecimal.ZERO) < 0;
     }

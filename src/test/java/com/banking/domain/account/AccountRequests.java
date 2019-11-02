@@ -18,8 +18,12 @@ public class AccountRequests {
     private AccountRequests() {
     }
 
-    public static String basePath(String userId) {
+    public static String accountsPath(String userId) {
         return String.format("%s/%s/accounts", UserRequests.BASE_PATH, userId);
+    }
+
+    public static String accountPath(String userId, String accountId) {
+        return String.format("%s/%s", accountsPath(userId), accountId);
     }
 
     public static Response postAccount(String ownerId, String currency, String initialAmount, String accountType) {
@@ -31,6 +35,15 @@ public class AccountRequests {
                 .contentType(ContentType.JSON)
                 .body(json)
                 .when()
-                .post(basePath(ownerId));
+                .post(accountsPath(ownerId));
+    }
+
+    public static Account postAccountAndExtractResponse(String ownerId,
+                                                        String currency,
+                                                        String initialAmount,
+                                                        String accountType) {
+        return postAccount(ownerId, currency, initialAmount, accountType)
+                .then()
+                .extract().body().as(Account.class);
     }
 }
