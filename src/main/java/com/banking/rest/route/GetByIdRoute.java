@@ -22,7 +22,7 @@ public abstract class GetByIdRoute<T extends Entity> implements Route {
     @Override
     public Object handle(Request request, Response response) throws Exception {
         final String id = request.params("id");
-        final Optional<T> entity = entityWithId(id);
+        final Optional<T> entity = entityWithId(id, request);
         response.type(ContentType.JSON);
         if (entity.isPresent()) {
             response.status(ResponseCode.OK);
@@ -35,5 +35,5 @@ public abstract class GetByIdRoute<T extends Entity> implements Route {
         }
     }
 
-    protected abstract Optional<T> entityWithId(String id);
+    protected abstract Optional<T> entityWithId(String id, Request request) throws UnprocessableEntityException;
 }

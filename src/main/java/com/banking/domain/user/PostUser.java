@@ -3,7 +3,7 @@ package com.banking.domain.user;
 import com.banking.rest.ValidationMessage;
 import com.banking.rest.route.PostBody;
 import com.banking.rest.route.PostRoute;
-import com.banking.rest.route.ResourceCreationFailed;
+import com.banking.rest.route.UnprocessableEntityException;
 import com.google.gson.Gson;
 import spark.Request;
 
@@ -20,7 +20,7 @@ public class PostUser extends PostRoute<IndividualUser, PostUser.Body> {
     }
 
     @Override
-    protected IndividualUser create(Body body) throws ResourceCreationFailed {
+    protected IndividualUser create(Body body) throws UnprocessableEntityException {
         return userService.signUpIndividual(body.firstName(), body.lastName());
     }
 

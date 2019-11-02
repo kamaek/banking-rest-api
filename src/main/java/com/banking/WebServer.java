@@ -10,7 +10,7 @@ import com.banking.rest.ContentType;
 import com.banking.rest.ErrorResponse;
 import com.banking.rest.ResponseCode;
 import com.banking.rest.ValidationException;
-import com.banking.rest.route.ResourceCreationFailed;
+import com.banking.rest.route.UnprocessableEntityException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import spark.Spark;
@@ -18,6 +18,8 @@ import spark.Spark;
 public class WebServer {
 
     public static final int DEFAULT_PORT = 4567;
+
+    private static final String GET_BY_ID_PREFIX = "/:id";
 
     public static void main(String[] args) {
         new WebServer().start(DEFAULT_PORT);
@@ -49,16 +51,15 @@ public class WebServer {
         Spark.path("/users", () -> {
             Spark.post("", new PostUser(userService, gson));
             Spark.get("", new GetAllUsers(userService, gson));
-            Spark.get("/:id", new GetUserById(userService, gson));
+            Spark.get(GET_BY_ID_PREFIX, new GetUserById(userService, gson));
         });
     }
 
     private void initAccountRoutes(Gson gson, AccountService accountService) {
         Spark.path("/users/:userId/accounts", () -> {
             Spark.post("", new PostAccount(accountService, gson));
-            //TODO:02.11.2019:dmytro.hrankin: add missing endpoints
-//            Spark.get("", new GetAllUsers(userService, gson));
-//            Spark.get("/:id", new GetUserById(userService, gson));
+            Spark.get("", new GetUserAccounts(accountService, gson));
+            Spark.get(GET_BY_ID_PREFIX, new GetUserAccountById(accountService, gson));
         });
     }
 
@@ -69,7 +70,7 @@ public class WebServer {
             response.status(ResponseCode.UNPROCESSABLE_ENTITY);
             response.body(gson.toJson(responseBody));
         });
-        Spark.exception(ResourceCreationFailed.class, (e, request, response) -> {
+        Spark.exception(UnprocessableEntityException.class, (e, request, response) -> {
             final String detail = e.getCause().getMessage();
             final ErrorResponse responseBody = ErrorResponse.newBuilder().addDetail(detail).build();
             response.type(ContentType.JSON);

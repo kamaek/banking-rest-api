@@ -41,9 +41,9 @@ public abstract class PostRoute<E extends Entity, B extends PostBody> implements
      *
      * @param body the valid request body
      * @return created resource
-     * @throws ResourceCreationFailed if business rules don't allow to create an entity
+     * @throws UnprocessableEntityException if business rules don't allow to create an entity
      */
-    protected abstract E create(B body) throws ResourceCreationFailed;
+    protected abstract E create(B body) throws UnprocessableEntityException;
 
     /**
      * Extracts payload from the specified request.

@@ -1,4 +1,5 @@
 out/
+build/
 .idea/
 .gradle/
 /gradle/wrapper/gradle-wrapper.jar

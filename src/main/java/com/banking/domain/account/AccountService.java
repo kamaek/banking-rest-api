@@ -51,6 +51,12 @@ public class AccountService {
                 .collect(toList());
     }
 
+    public Optional<Account> accountOwnedBy(String userId, String accountId) throws UserNotExists {
+        return accountsOwnedBy(userId).stream()
+                .filter(account -> account.id().equals(accountId))
+                .findAny();
+    }
+
     private IndividualUser checkUserExists(String userId) throws UserNotExists {
         final Optional<IndividualUser> user = userRepository.entity(userId);
         return user.orElseThrow(() -> new UserNotExists(userId));

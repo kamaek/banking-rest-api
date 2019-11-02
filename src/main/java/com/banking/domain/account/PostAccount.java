@@ -6,7 +6,7 @@ import com.banking.domain.user.UserNotExists;
 import com.banking.rest.ValidationMessage;
 import com.banking.rest.route.PostBody;
 import com.banking.rest.route.PostRoute;
-import com.banking.rest.route.ResourceCreationFailed;
+import com.banking.rest.route.UnprocessableEntityException;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import spark.Request;
@@ -24,11 +24,11 @@ public class PostAccount extends PostRoute<Account, PostAccount.Body> {
     }
 
     @Override
-    protected Account create(Body body) throws ResourceCreationFailed {
+    protected Account create(Body body) throws UnprocessableEntityException {
         try {
             return accountService.openDebitAccount(body.ownerId(), body.initialBalance());
         } catch (UserNotExists e) {
-            throw new ResourceCreationFailed(e);
+            throw new UnprocessableEntityException(e);
         }
     }
 

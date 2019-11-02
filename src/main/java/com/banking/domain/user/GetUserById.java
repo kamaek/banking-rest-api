@@ -2,6 +2,7 @@ package com.banking.domain.user;
 
 import com.banking.rest.route.GetByIdRoute;
 import com.google.gson.Gson;
+import spark.Request;
 
 import java.util.Optional;
 
@@ -15,7 +16,7 @@ public class GetUserById extends GetByIdRoute<IndividualUser> {
     }
 
     @Override
-    protected Optional<IndividualUser> entityWithId(String id) {
+    protected Optional<IndividualUser> entityWithId(String id, Request request) {
         return userService.individual(id);
     }
 }

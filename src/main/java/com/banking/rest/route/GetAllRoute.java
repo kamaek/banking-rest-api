@@ -22,8 +22,8 @@ public abstract class GetAllRoute<T extends Entity> implements Route {
     public Object handle(Request request, Response response) throws Exception {
         response.type(ContentType.JSON);
         response.status(ResponseCode.OK);
-        return gson.toJson(responseBody());
+        return gson.toJson(responseBody(request));
     }
 
-    protected abstract Collection<T> responseBody();
+    protected abstract Collection<T> responseBody(Request request) throws UnprocessableEntityException;
 }
