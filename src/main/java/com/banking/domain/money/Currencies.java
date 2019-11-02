@@ -1,5 +1,7 @@
 package com.banking.domain.money;
 
+import java.util.Currency;
+
 public final class Currencies {
 
     /**
@@ -9,10 +11,10 @@ public final class Currencies {
     }
 
     public static Currency americanDollar() {
-        return new Currency("USD");
+        return Currency.getInstance("USD");
     }
 
     public static Currency euro() {
-        return new Currency("EUR");
+        return Currency.getInstance("EUR");
     }
 }
