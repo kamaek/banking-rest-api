@@ -24,6 +24,22 @@ public class AccountService {
     }
 
     /**
+     * Opens account of the specified type.
+     *
+     * @see #openDebitAccount(String, Money)
+     */
+    @SuppressWarnings("SwitchStatementWithTooFewBranches" /* The number of accounts type might be increased. */)
+    public Account openAccount(String accountIssuerId, Money initialBalance, AccountType accountType) throws UserNotExists {
+        switch (accountType) {
+            case DEBIT:
+                return openDebitAccount(accountIssuerId, initialBalance);
+            default:
+                final String errMsg = String.format("Unexpected account type encountered: %s", accountType);
+                throw new IllegalStateException(errMsg);
+        }
+    }
+
+    /**
      * Opens a debit account.
      *
      * <p>Account can have non-empty balance initially, if a user "provided" these money to a bank.

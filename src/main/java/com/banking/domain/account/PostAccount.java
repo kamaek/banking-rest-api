@@ -26,7 +26,7 @@ public class PostAccount extends PostRoute<Account, PostAccount.Body> {
     @Override
     protected Account create(Body body) throws UnprocessableEntityException {
         try {
-            return accountService.openDebitAccount(body.ownerId(), body.initialBalance());
+            return accountService.openAccount(body.ownerId(), body.initialBalance(), body.accountType());
         } catch (UserNotExists e) {
             throw new UnprocessableEntityException(e);
         }
@@ -89,6 +89,16 @@ public class PostAccount extends PostRoute<Account, PostAccount.Body> {
 
         private Money initialBalance() {
             return new Money(initialAmount, currency);
+        }
+
+        public AccountType accountType() {
+            return AccountType.fromRepresentation(accountType)
+                    .orElseThrow(this::newInvalidAccountException);
+        }
+
+        private IllegalStateException newInvalidAccountException() {
+            final String message = "AccountType representation is not valid, validate() method should be called before.";
+            return new IllegalStateException(message);
         }
     }
 }
