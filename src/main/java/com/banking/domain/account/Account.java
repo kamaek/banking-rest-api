@@ -6,6 +6,7 @@ import com.banking.domain.payment.NotEnoughFunds;
 import com.banking.domain.user.IndividualUser;
 import com.banking.persistence.Entity;
 
+import java.util.Currency;
 import java.util.Objects;
 
 import static java.lang.String.format;
@@ -91,6 +92,10 @@ public class Account extends Entity {
      */
     public boolean hasEnoughFundsToTransfer(Money money) {
         return money.isLessThan(balance);
+    }
+
+    public boolean hasBalanceIn(Currency currency) {
+        return balance().isInCurrency(currency);
     }
 
     public boolean isDebitAccount() {

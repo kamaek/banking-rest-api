@@ -11,11 +11,4 @@ public class ValidationMessage {
     public String text() {
         return text;
     }
-
-    @Override
-    public String toString() {
-        return "ValidationMessage{" +
-                "message='" + text + '\'' +
-                '}';
-    }
 }

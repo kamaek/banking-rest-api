@@ -57,6 +57,10 @@ public final class Money {
         return currency.equals(anotherMoney.currency);
     }
 
+    public boolean isInCurrency(Currency currencyToCheck) {
+        return currency.equals(currencyToCheck);
+    }
+
     /**
      * Determines whether the amount of money is less than the amount of the specified money.
      *
@@ -86,7 +90,8 @@ public final class Money {
         return currency;
     }
 
-    BigDecimal amount() {
+    // Visible for testing.
+    public BigDecimal amount() {
         return amount;
     }
 

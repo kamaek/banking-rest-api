@@ -54,7 +54,7 @@ class IndividualUserRestTest extends RestTest {
                 .body("{\"lastName\": \"Doe\"}")
                 .when().post(UserRequests.BASE_PATH)
                 .then()
-                .spec(expectedValidationError("First name of a user cannot be blank"));
+                .spec(expectedValidationError("First name of a user cannot be blank."));
     }
 
     @Test

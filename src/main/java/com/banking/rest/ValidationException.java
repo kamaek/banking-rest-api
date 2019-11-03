@@ -10,7 +10,7 @@ public class ValidationException extends Exception {
 
     private final Collection<String> reasons;
 
-    public ValidationException(Collection<String> reasons) {
+    private ValidationException(Collection<String> reasons) {
         this.reasons = new ArrayList<>(reasons);
     }
 
@@ -21,14 +21,7 @@ public class ValidationException extends Exception {
         return new ValidationException(reasons);
     }
 
-    public Collection<String> reasons() {
+    Collection<String> reasons() {
         return new ArrayList<>(reasons);
-    }
-
-    @Override
-    public String toString() {
-        return "ValidationException{" +
-                "reasons=" + reasons +
-                '}';
     }
 }

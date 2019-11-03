@@ -1,6 +1,7 @@
 package com.banking.domain.payment;
 
 import com.banking.domain.account.Account;
+import com.banking.domain.account.AccountNotExists;
 import com.banking.domain.money.Money;
 import com.banking.persistence.Repository;
 
@@ -12,9 +13,11 @@ import com.banking.persistence.Repository;
 public class PaymentService {
 
     private final Repository<Account> accountRepository;
+    private final Repository<DomesticPayment> paymentRepository;
 
-    public PaymentService(Repository<Account> accountRepository) {
+    public PaymentService(Repository<Account> accountRepository, Repository<DomesticPayment> paymentRepository) {
         this.accountRepository = accountRepository;
+        this.paymentRepository = paymentRepository;
     }
 
     /**
@@ -23,25 +26,48 @@ public class PaymentService {
      * <p>This is a domestic transfer, so accounts should {@linkplain Account#operateInSameCurrency(Account)
      * operate in the same currency} to fulfill this operation.
      *
-     * @param sender           the account to withdraw money from
-     * @param recipient        the account to deposit money to
+     * @param senderId         the ID of the account to withdraw money from
+     * @param recipientId      the ID of the account to deposit money to
      * @param instructedAmount the amount of money instructed to be transferred
      */
-    public void transferMoneyDomestically(Account sender, Account recipient, Money instructedAmount)
-            throws AccountsOperateInDifferentCurrencies, NotEnoughFunds, CannotTransferMoneyWithinSameAccount {
-        //TODO:03.11.2019:dmytro.hrankin: check accounts exist
+    public DomesticPayment transferMoneyDomestically(String senderId, String recipientId, Money instructedAmount)
+            throws PaymentException, AccountNotExists {
+        final Account sender = findAccountOrThrow(senderId);
+        final Account recipient = findAccountOrThrow(recipientId);
         checkMoneyTransferToDifferentAccount(sender, recipient);
-        if (!sender.operateInSameCurrency(recipient)) {
-            throw new AccountsOperateInDifferentCurrencies(sender.id(), recipient.id());
-        }
+        checkHasSameCurrency(sender, recipient, instructedAmount);
         sender.withdraw(instructedAmount);
         recipient.deposit(instructedAmount);
         updateAccounts(sender, recipient);
+        return createDomesticPayment(senderId, recipientId, instructedAmount);
+    }
+
+    private DomesticPayment createDomesticPayment(String senderId, String recipientId, Money instructedAmount) {
+        final DomesticPayment payment = new DomesticPayment(senderId, recipientId, instructedAmount);
+        paymentRepository.add(payment);
+        return payment;
+    }
+
+    private Account findAccountOrThrow(String accountId) throws AccountNotExists {
+        return accountRepository.entity(accountId)
+                .orElseThrow(() -> new AccountNotExists(accountId));
     }
 
     private void updateAccounts(Account firstAccount, Account secondAccount) {
         accountRepository.add(firstAccount);
         accountRepository.add(secondAccount);
+    }
+
+    private void checkHasSameCurrency(Account sender, Account recipient, Money instructedAmount)
+            throws AccountsOperateInDifferentCurrencies, InvalidPaymentCurrency {
+        if (!sender.operateInSameCurrency(recipient)) {
+            throw new AccountsOperateInDifferentCurrencies(sender.id(), recipient.id());
+        }
+        if (!sender.hasBalanceIn(instructedAmount.currency())) {
+            final String errMsg = String.format("Accounts operate in %s, but instructed amount is in %s.",
+                    sender.balance().currency(), instructedAmount.currency());
+            throw new InvalidPaymentCurrency(errMsg);
+        }
     }
 
     private void checkMoneyTransferToDifferentAccount(Account sender, Account recipient)

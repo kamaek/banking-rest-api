@@ -30,7 +30,8 @@ class PaymentServiceConcurrencyTest {
 
     private final Repository<IndividualUser> userRepository = new InMemoryRepository<>();
     private final Repository<Account> accountRepository = new InMemoryRepository<>();
-    private final PaymentService paymentService = new PaymentService(accountRepository);
+    private final Repository<DomesticPayment> paymentRepository = new InMemoryRepository<>();
+    private final PaymentService paymentService = new PaymentService(accountRepository, paymentRepository);
 
     @BeforeEach
     void setUp() {
@@ -45,7 +46,8 @@ class PaymentServiceConcurrencyTest {
         final Account firstAccount = createDebitAccount(batman, tenThousand);
         final Account secondAccount = createDebitAccount(batman, tenThousand);
 
-        runConcurrently(1000, () -> paymentService.transferMoneyDomestically(firstAccount, secondAccount, tenEuro));
+        runConcurrently(1000,
+                () -> paymentService.transferMoneyDomestically(firstAccount.id(), secondAccount.id(), tenEuro));
         assertAccountHasBalance(firstAccount.id(), new Money("9000.00", "EUR"));
         assertAccountHasBalance(secondAccount.id(), new Money("11000.00", "EUR"));
     }
@@ -60,13 +62,6 @@ class PaymentServiceConcurrencyTest {
         final Optional<Account> account = accountRepository.entity(accountId);
         assertTrue(account.isPresent());
         assertEquals(expectedBalance, account.get().balance());
-    }
-
-    private static <T> void runConcurrently(int numberOfThreads, ThrowingRunnable runnable) throws ExecutionException, InterruptedException {
-        runConcurrently(numberOfThreads, () -> {
-            runnable.run();
-            return null;
-        });
     }
 
     /**

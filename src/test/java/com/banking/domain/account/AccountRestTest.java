@@ -78,10 +78,7 @@ class AccountRestTest extends RestTest {
     @DisplayName("return existing account by ID")
     void returnExistingAccountById() {
         final Account expectedAccount = postAccountAndExtractResponse(batman.id(), "EUR", "100.00", AccountType.DEBIT.toString());
-        final Account foundAccount = when().get(accountPath(batman.id(), expectedAccount.id()))
-                .then()
-                .spec(expectedSuccessResponse())
-                .extract().body().as(Account.class);
+        final Account foundAccount = getAccountAndExtractBody(batman.id(), expectedAccount.id());
         assertEquals(expectedAccount.id(), foundAccount.id());
         assertTrue(foundAccount.ownedBy(batman));
         assertEquals(expectedAccount.balance(), foundAccount.balance());

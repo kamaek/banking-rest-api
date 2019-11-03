@@ -3,6 +3,9 @@ package com.banking;
 import com.banking.domain.account.*;
 import com.banking.domain.money.Money;
 import com.banking.domain.money.MoneyTypeAdapter;
+import com.banking.domain.payment.DomesticPayment;
+import com.banking.domain.payment.PaymentService;
+import com.banking.domain.payment.PostDomesticPayment;
 import com.banking.domain.user.*;
 import com.banking.persistence.InMemoryRepository;
 import com.banking.persistence.Repository;
@@ -29,12 +32,15 @@ public class WebServer {
         final Gson gson = newConfiguredGson();
         final Repository<IndividualUser> userRepository = new InMemoryRepository<>();
         final Repository<Account> accountRepository = new InMemoryRepository<>();
+        final Repository<DomesticPayment> paymentRepository = new InMemoryRepository<>();
         final UserService userService = new UserService(userRepository);
         final AccountService accountService = new AccountService(accountRepository, userRepository);
+        final PaymentService paymentService = new PaymentService(accountRepository, paymentRepository);
 
         Spark.port(port);
         initUserRoutes(gson, userService);
         initAccountRoutes(gson, accountService);
+        initPaymentRoutes(gson, paymentService);
         addExceptionsHandlers(gson);
         Spark.awaitInitialization();
     }
@@ -60,6 +66,12 @@ public class WebServer {
             Spark.post("", new PostAccount(accountService, gson));
             Spark.get("", new GetUserAccounts(accountService, gson));
             Spark.get(GET_BY_ID_PREFIX, new GetUserAccountById(accountService, gson));
+        });
+    }
+
+    private void initPaymentRoutes(Gson gson, PaymentService paymentService) {
+        Spark.path("/domestic-payments", () -> {
+            Spark.post("", new PostDomesticPayment(paymentService, gson));
         });
     }
 
