@@ -2,12 +2,19 @@ package com.banking.domain.payment;
 
 import com.banking.domain.account.Account;
 import com.banking.domain.money.Money;
+import com.banking.persistence.Repository;
 
 /**
  * A domain service responsible transferring funds between accounts.
  */
 //TODO:03.11.2019:dmytro.hrankin: ensure this class is thread-safe add a note about this
 public class PaymentService {
+
+    private final Repository<Account> accountRepository;
+
+    public PaymentService(Repository<Account> accountRepository) {
+        this.accountRepository = accountRepository;
+    }
 
     /**
      * Transfers the instructed amount of money from the sender's account to recipient's account.
@@ -22,6 +29,15 @@ public class PaymentService {
     public void transferMoneyDomestically(Account sender, Account recipient, Money instructedAmount)
             throws AccountsOperateInDifferentCurrencies, NotEnoughFunds {
         //TODO:03.11.2019:dmytro.hrankin: check accounts exist
-        //TODO:03.11.2019:dmytro.hrankin: implement
+        if (!sender.operateInSameCurrency(recipient)) {
+            throw new AccountsOperateInDifferentCurrencies(sender.id(), recipient.id());
+        }
+        if (!sender.hasEnoughFundsToTransfer(instructedAmount)) {
+            throw new NotEnoughFunds(sender.id());
+        }
+        sender.withdraw(instructedAmount);
+        recipient.deposit(instructedAmount);
+        accountRepository.add(sender);
+        accountRepository.add(recipient);
     }
 }

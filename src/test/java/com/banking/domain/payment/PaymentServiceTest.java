@@ -22,7 +22,7 @@ class PaymentServiceTest {
 
     private final Repository<IndividualUser> userRepository = new InMemoryRepository<>();
     private final Repository<Account> accountRepository = new InMemoryRepository<>();
-    private final PaymentService paymentService = new PaymentService();
+    private final PaymentService paymentService = new PaymentService(accountRepository);
 
     @BeforeEach
     void setUp() {
@@ -50,8 +50,8 @@ class PaymentServiceTest {
         final Account zeroBalanceAccount = createDebitAccount(batman, new Money("0.00", "EUR"));
         final Account oneHundredBalanceAccount = createDebitAccount(batman, new Money("100.00", "EUR"));
         final Money oneEuro = new Money("1.00", "EUR");
-        final AccountsOperateInDifferentCurrencies exception = assertThrows(
-                AccountsOperateInDifferentCurrencies.class,
+        final NotEnoughFunds exception = assertThrows(
+                NotEnoughFunds.class,
                 () -> paymentService.transferMoneyDomestically(zeroBalanceAccount, oneHundredBalanceAccount, oneEuro));
         final String expectedExceptionMessage = format("Account %s doesn't have enough funds to perform a payment.",
                 zeroBalanceAccount.id());
@@ -66,7 +66,7 @@ class PaymentServiceTest {
         final Money tenEuro = new Money("10.00", "EUR");
         paymentService.transferMoneyDomestically(oneHundredBalanceAccount, zeroBalanceAccount, tenEuro);
         assertAccountHasBalance(zeroBalanceAccount.id(), new Money("10.00", "EUR"));
-        assertAccountHasBalance(zeroBalanceAccount.id(), new Money("90.00", "EUR"));
+        assertAccountHasBalance(oneHundredBalanceAccount.id(), new Money("90.00", "EUR"));
     }
 
     private Account createDebitAccount(IndividualUser owner, Money initialBalance) {

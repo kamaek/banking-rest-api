@@ -57,12 +57,40 @@ public final class Money {
         return currency.equals(anotherMoney.currency);
     }
 
+    /**
+     * Determines whether the amount of money is less than the amount of the specified money.
+     *
+     * <p>Comparison is allowed only for money with the same currency.
+     */
+    public boolean isLessThan(Money anotherMoney) {
+        checkHasSameCurrency(anotherMoney);
+        return amount.compareTo(anotherMoney.amount) < 0;
+    }
+
+    public Money add(Money anotherMoney) {
+        checkHasSameCurrency(anotherMoney);
+        final BigDecimal newAmount = amount.add(anotherMoney.amount);
+        return new Money(newAmount, currency);
+    }
+
+    public Money subtract(Money anotherMoney) {
+        checkHasSameCurrency(anotherMoney);
+        final BigDecimal newAmount = amount.subtract(anotherMoney.amount);
+        return new Money(newAmount, currency);
+    }
+
+    public Currency currency() {
+        return currency;
+    }
+
     BigDecimal amount() {
         return amount;
     }
 
-    Currency currency() {
-        return currency;
+    private void checkHasSameCurrency(Money anotherMoney) {
+        if (!hasSameCurrency(anotherMoney)) {
+            throw new IllegalStateException("Cannot operate with money in different currencies.");
+        }
     }
 
     private static boolean isNegative(BigDecimal amount) {
