@@ -27,8 +27,9 @@ public class PaymentService {
      * @param instructedAmount the amount of money instructed to be transferred
      */
     public void transferMoneyDomestically(Account sender, Account recipient, Money instructedAmount)
-            throws AccountsOperateInDifferentCurrencies, NotEnoughFunds {
+            throws AccountsOperateInDifferentCurrencies, NotEnoughFunds, CannotTransferMoneyWithinSameAccount {
         //TODO:03.11.2019:dmytro.hrankin: check accounts exist
+        checkMoneyTransferToDifferentAccount(sender, recipient);
         if (!sender.operateInSameCurrency(recipient)) {
             throw new AccountsOperateInDifferentCurrencies(sender.id(), recipient.id());
         }
@@ -39,5 +40,12 @@ public class PaymentService {
         recipient.deposit(instructedAmount);
         accountRepository.add(sender);
         accountRepository.add(recipient);
+    }
+
+    private void checkMoneyTransferToDifferentAccount(Account sender, Account recipient)
+            throws CannotTransferMoneyWithinSameAccount {
+        if (sender.id().equals(recipient.id())) {
+            throw new CannotTransferMoneyWithinSameAccount();
+        }
     }
 }

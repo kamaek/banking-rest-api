@@ -5,7 +5,7 @@ package com.banking.domain.payment;
  */
 public class AccountsOperateInDifferentCurrencies extends PaymentException {
 
-    public AccountsOperateInDifferentCurrencies(String firstAccountId, String secondAccountId) {
+    AccountsOperateInDifferentCurrencies(String firstAccountId, String secondAccountId) {
         super(String.format("Account %s and %s operate in different currencies.", firstAccountId, secondAccountId));
     }
 }

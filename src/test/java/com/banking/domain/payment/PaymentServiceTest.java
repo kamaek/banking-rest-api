@@ -18,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class PaymentServiceTest {
 
     private final IndividualUser batman = new IndividualUser("Mr.", "Batman");
-    private final IndividualUser joker = new IndividualUser("Mr.", "Joker");
 
     private final Repository<IndividualUser> userRepository = new InMemoryRepository<>();
     private final Repository<Account> accountRepository = new InMemoryRepository<>();
@@ -27,7 +26,6 @@ class PaymentServiceTest {
     @BeforeEach
     void setUp() {
         userRepository.add(batman);
-        userRepository.add(joker);
     }
 
     @Test
@@ -60,13 +58,23 @@ class PaymentServiceTest {
 
     @Test
     @DisplayName("transfer money domestically")
-    void transferMoneyDomestically() throws NotEnoughFunds, AccountsOperateInDifferentCurrencies {
+    void transferMoneyDomestically() throws NotEnoughFunds, AccountsOperateInDifferentCurrencies, CannotTransferMoneyWithinSameAccount {
         final Account zeroBalanceAccount = createDebitAccount(batman, new Money("0.00", "EUR"));
         final Account oneHundredBalanceAccount = createDebitAccount(batman, new Money("100.00", "EUR"));
         final Money tenEuro = new Money("10.00", "EUR");
         paymentService.transferMoneyDomestically(oneHundredBalanceAccount, zeroBalanceAccount, tenEuro);
         assertAccountHasBalance(zeroBalanceAccount.id(), new Money("10.00", "EUR"));
         assertAccountHasBalance(oneHundredBalanceAccount.id(), new Money("90.00", "EUR"));
+    }
+
+    @Test
+    @DisplayName("not allow domestic money transfer to the same account")
+    void notAllowDomesticMoneyTransferAmongSameAccount() {
+        final Account account = createDebitAccount(batman, new Money("100.00", "EUR"));
+        final Money tenEuro = new Money("10.00", "EUR");
+        assertThrows(
+                CannotTransferMoneyWithinSameAccount.class,
+                () -> paymentService.transferMoneyDomestically(account, account, tenEuro));
     }
 
     private Account createDebitAccount(IndividualUser owner, Money initialBalance) {

@@ -5,7 +5,7 @@ package com.banking.domain.payment;
  */
 public class NotEnoughFunds extends PaymentException {
 
-    public NotEnoughFunds(String accountId) {
+    NotEnoughFunds(String accountId) {
         super(String.format("Account %s doesn't have enough funds to perform a payment.", accountId));
     }
 }
