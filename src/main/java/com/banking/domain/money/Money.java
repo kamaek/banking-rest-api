@@ -12,6 +12,8 @@ import static java.lang.String.format;
 
 /**
  * A value object representing amount of money and its currency.
+ *
+ * <p>This class is immutable and hence thread-safe.
  */
 public final class Money {
 
@@ -48,11 +50,18 @@ public final class Money {
         }
     }
 
-    public BigDecimal amount() {
+    /**
+     * Determines whether the money has the same currency as the specified money.
+     */
+    public boolean hasSameCurrency(Money anotherMoney) {
+        return currency.equals(anotherMoney.currency);
+    }
+
+    BigDecimal amount() {
         return amount;
     }
 
-    public Currency currency() {
+    Currency currency() {
         return currency;
     }
 

@@ -26,6 +26,22 @@ class MoneyTest {
     }
 
     @Test
+    @DisplayName("recognize money with the same currency")
+    void recognizeMoneyWithSameCurrency() {
+        final Money fiveDollars = new Money("5", "USD");
+        final Money fiftyDollars = new Money("50", "USD");
+        assertTrue(fiveDollars.hasSameCurrency(fiftyDollars));
+    }
+
+    @Test
+    @DisplayName("recognize money with a different currency")
+    void recognizeMoneyWithDifferentCurrency() {
+        final Money fiveEuro = new Money("5", "EUR");
+        final Money fiftyDollars = new Money("50", "USD");
+        assertFalse(fiveEuro.hasSameCurrency(fiftyDollars));
+    }
+
+    @Test
     @DisplayName("scale amount according to currency")
     void scaleAmountAccordingToCurrency() {
         final BigDecimal five = new BigDecimal(5);

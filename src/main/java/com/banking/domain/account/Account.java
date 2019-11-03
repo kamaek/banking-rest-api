@@ -43,11 +43,19 @@ public class Account extends Entity {
         return ownerId.equals(user.id());
     }
 
-    public Money balance() {
-        return balance;
+    /**
+     * Determines whether this and the specified account operate in the same currency.
+     */
+    public boolean operateInSameCurrency(Account anotherAccount) {
+        return balance().hasSameCurrency(anotherAccount.balance());
     }
 
     public boolean isDebitAccount() {
         return accountType == AccountType.DEBIT;
+    }
+
+    // Visible for testing.
+    public Money balance() {
+        return balance;
     }
 }
