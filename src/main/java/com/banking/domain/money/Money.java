@@ -73,9 +73,12 @@ public final class Money {
         return new Money(newAmount, currency);
     }
 
-    public Money subtract(Money anotherMoney) {
+    public Money subtract(Money anotherMoney) throws NegativeMoneyAmount {
         checkHasSameCurrency(anotherMoney);
         final BigDecimal newAmount = amount.subtract(anotherMoney.amount);
+        if (isNegative(newAmount)) {
+            throw new NegativeMoneyAmount();
+        }
         return new Money(newAmount, currency);
     }
 

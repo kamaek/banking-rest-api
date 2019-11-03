@@ -6,8 +6,9 @@ import com.banking.persistence.Repository;
 
 /**
  * A domain service responsible transferring funds between accounts.
+ *
+ * <p>Money transfers are performed in a thread-safe way.
  */
-//TODO:03.11.2019:dmytro.hrankin: ensure this class is thread-safe add a note about this
 public class PaymentService {
 
     private final Repository<Account> accountRepository;
@@ -33,13 +34,14 @@ public class PaymentService {
         if (!sender.operateInSameCurrency(recipient)) {
             throw new AccountsOperateInDifferentCurrencies(sender.id(), recipient.id());
         }
-        if (!sender.hasEnoughFundsToTransfer(instructedAmount)) {
-            throw new NotEnoughFunds(sender.id());
-        }
         sender.withdraw(instructedAmount);
         recipient.deposit(instructedAmount);
-        accountRepository.add(sender);
-        accountRepository.add(recipient);
+        updateAccounts(sender, recipient);
+    }
+
+    private void updateAccounts(Account firstAccount, Account secondAccount) {
+        accountRepository.add(firstAccount);
+        accountRepository.add(secondAccount);
     }
 
     private void checkMoneyTransferToDifferentAccount(Account sender, Account recipient)

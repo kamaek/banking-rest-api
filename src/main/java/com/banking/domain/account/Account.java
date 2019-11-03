@@ -1,6 +1,8 @@
 package com.banking.domain.account;
 
 import com.banking.domain.money.Money;
+import com.banking.domain.money.NegativeMoneyAmount;
+import com.banking.domain.payment.NotEnoughFunds;
 import com.banking.domain.user.IndividualUser;
 import com.banking.persistence.Entity;
 
@@ -38,16 +40,36 @@ public class Account extends Entity {
         return new Account(ownerId, AccountType.DEBIT, balance);
     }
 
-    //TODO:03.11.2019:dmytro.hrankin: consider make it thread-safe
-    public void withdraw(Money money) {
+    /**
+     * Withdraws the specified money from this account.
+     *
+     * <p>This method is thread-safe assuming that there is only one {@link Account} object with the same ID.
+     * Otherwise, it would be better to use locking based on the value of account's ID.
+     *
+     * @throws NotEnoughFunds if the account has not enough funds
+     */
+    public void withdraw(Money money) throws NotEnoughFunds {
         checkCanOperateWith(money);
-        balance = balance.subtract(money);
+        synchronized (this) {
+            try {
+                balance = balance.subtract(money);
+            } catch (NegativeMoneyAmount e) {
+                throw new NotEnoughFunds(id());
+            }
+        }
     }
 
-    //TODO:03.11.2019:dmytro.hrankin: consider make it thread-safe
+    /**
+     * Deposits the specified money to this account.
+     *
+     * <p>This method is thread-safe assuming that there is only one {@link Account} object with the same ID.
+     * Otherwise, it would be better to use locking based on the value of account's ID.
+     */
     public void deposit(Money money) {
         checkCanOperateWith(money);
-        balance = balance.add(money);
+        synchronized (this) {
+            balance = balance.add(money);
+        }
     }
 
     /**
