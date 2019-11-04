@@ -13,6 +13,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.UUID;
+
 import static com.banking.domain.account.AccountRequests.getAccountAndExtractBody;
 import static com.banking.domain.account.AccountRequests.postAccountAndExtractResponse;
 import static com.banking.domain.user.UserRequests.postUserAndExtractBody;
@@ -78,6 +80,16 @@ class DomesticPaymentRestTest extends RestTest {
         final String amountToTransfer = exceedsSavings.amount().toString();
         final String expectedMessage = format("Account %s doesn't have enough funds to perform a payment.", savingsAccount.id());
         postPayment(savingsAccount.id(), shoppingAccount.id(), amountToTransfer, "USD")
+                .then()
+                .spec(expectedUnprocessableEntity(expectedMessage));
+    }
+
+    @Test
+    @DisplayName("return 422 if sender account doesn't exist")
+    void notPerformPaymentIfSenderAccountNotExists() {
+        final String nonExistingAccountId = UUID.randomUUID().toString();
+        final String expectedMessage = format("Account %s not exists in the system.", nonExistingAccountId);
+        postPayment(nonExistingAccountId, shoppingAccount.id(), "1.00", "USD")
                 .then()
                 .spec(expectedUnprocessableEntity(expectedMessage));
     }

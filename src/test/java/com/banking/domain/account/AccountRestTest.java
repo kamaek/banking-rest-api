@@ -47,13 +47,34 @@ class AccountRestTest extends RestTest {
     }
 
     @Test
-    @DisplayName("return 422 if account owner not exists")
+    @DisplayName("return 422 if account created for non-existing owner")
     void return422IfAccountOwnerNotExists() {
         final String nonExistingOwnerId = UUID.randomUUID().toString();
         final String expectedErrorText = String.format("User %s not exists in the system.", nonExistingOwnerId);
         postAccount(nonExistingOwnerId, "USD", "0.00", AccountType.DEBIT.toString())
                 .then()
                 .spec(expectedUnprocessableEntity(expectedErrorText));
+    }
+
+    @Test
+    @DisplayName("return 422 if accounts listed for non-existing owner")
+    void return422IfAccountsListedForNonExistingOwner() {
+        final String nonExistingOwnerId = UUID.randomUUID().toString();
+        final String expectedMessage = String.format("User %s not exists in the system.", nonExistingOwnerId);
+        when().get(accountsPath(nonExistingOwnerId))
+                .then()
+                .spec(expectedUnprocessableEntity(expectedMessage));
+    }
+
+    @Test
+    @DisplayName("return 422 if account listed for non-existing owner")
+    void return422IfAccountListedForNonExistingOwner() {
+        final String nonExistingOwnerId = UUID.randomUUID().toString();
+        final String nonExistingAccountId = UUID.randomUUID().toString();
+        final String expectedMessage = String.format("User %s not exists in the system.", nonExistingOwnerId);
+        when().get(accountPath(nonExistingOwnerId, nonExistingAccountId))
+                .then()
+                .spec(expectedUnprocessableEntity(expectedMessage));
     }
 
     @Test
