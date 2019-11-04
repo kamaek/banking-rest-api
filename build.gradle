@@ -12,17 +12,37 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.sparkjava:spark-core:2.8.0'
-    implementation 'com.google.code.gson:gson:2.8.6'
-    implementation 'org.slf4j:slf4j-simple:1.7.28'
+    compile 'com.sparkjava:spark-core:2.8.0'
+    compile 'com.google.code.gson:gson:2.8.6'
+    compile 'org.slf4j:slf4j-simple:1.7.28'
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.5.2'
     testImplementation 'io.rest-assured:rest-assured:4.1.2'
 }
 
+task runServer {
+    dependsOn ':jar'
+
+    doLast {
+        javaexec {
+            main = '-jar'
+            args = ['./build/libs/banking-1.0-SNAPSHOT.jar']
+        }
+    }
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'com.banking.WebServer'
+    }
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
 test {
     useJUnitPlatform()
     testLogging {
-        events "passed", "skipped", "failed"
+        events 'passed', 'skipped', 'failed'
     }
 }
